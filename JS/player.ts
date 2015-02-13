@@ -11,8 +11,9 @@ module Castlevania {
 
             this.anchor.setTo(0.5, 1);
 
-            game.physics.arcade.enableBody(this);
-            game.add.existing(this);
+            this.game.physics.arcade.enableBody(this);
+            this.body.collideWorldBounds = true;
+            this.game.add.existing(this);
             this.inputEnabled = true;
             this.input.enableDrag();
             this.events.onDragStart.add(this.onDown, this);
@@ -36,7 +37,9 @@ module Castlevania {
             if(this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
                 this.body.velocity.y = 150;
             }
-
+            if(this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)){
+                this.fire();
+            }
         }
 
         private onDown(sprite,pointer) {
@@ -45,6 +48,10 @@ module Castlevania {
 
         private onUp(sprite,pointer){
             this.body.moves = true;
+        }
+
+        private fire(){
+
         }
     }
 

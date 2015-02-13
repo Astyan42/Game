@@ -5,8 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 var Castlevania;
 (function (Castlevania) {
     var Boot = (function (_super) {
@@ -17,14 +17,18 @@ var Castlevania;
         Boot.prototype.preload = function () {
             this.load.image('preloadBar', 'assets/loader.png');
         };
+
         Boot.prototype.create = function () {
             //  Unless you specifically need to support multitouch I would recommend setting this to 1
             this.input.maxPointers = 1;
+
             //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
             this.stage.disableVisibilityChange = true;
+
             if (this.game.device.desktop) {
-            }
-            else {
+                //  If you have any desktop specific settings, they can go in here
+            } else {
+                //  Same goes for mobile settings.
             }
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.state.start('Preloader', true, false);
@@ -46,6 +50,7 @@ var Castlevania;
             this.state.add('Preloader', Castlevania.Preloader, false);
             this.state.add('MainMenu', Castlevania.MainMenu, false);
             this.state.add('Level1', Castlevania.Level1, false);
+
             this.state.start('Boot');
         }
         return MyGame;
@@ -53,14 +58,14 @@ var Castlevania;
     Castlevania.MyGame = MyGame;
 })(Castlevania || (Castlevania = {}));
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 window.onload = function () {
     var game = new Castlevania.MyGame();
 };
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 var Castlevania;
 (function (Castlevania) {
     var Level1 = (function (_super) {
@@ -76,6 +81,7 @@ var Castlevania;
             var tweenFadeBackgroundIn = this.add.tween(this.game.background).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
             tweenFadeBackgroundIn.onComplete.add(this.showStage, this);
         };
+
         Level1.prototype.showStage = function () {
             this.player = new Castlevania.Player(this.game, this.world.centerX, this.world.height);
         };
@@ -84,8 +90,8 @@ var Castlevania;
     Castlevania.Level1 = Level1;
 })(Castlevania || (Castlevania = {}));
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 var Castlevania;
 (function (Castlevania) {
     var MainMenu = (function (_super) {
@@ -95,20 +101,26 @@ var Castlevania;
         }
         MainMenu.prototype.create = function () {
             this.game.background = this.game.add.tileSprite(0, 0, this.world.width, this.world.height, 'blueBackground');
+
             this.logo = this.add.sprite(this.world.centerX, -300, 'logo');
             this.logo.anchor.setTo(0.5, 0.5);
+
             this.game.background.autoScroll(2, 2);
             this.add.tween(this.logo).to({ y: this.world.centerY }, 2000, Phaser.Easing.Elastic.Out, true, 2000);
+
             this.input.onDown.addOnce(this.fadeOut, this);
         };
+
         MainMenu.prototype.touchstart = function () {
             this.fadeOut();
         };
         MainMenu.prototype.fadeOut = function () {
             this.add.tween(this.game.background).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
             var tween = this.add.tween(this.logo).to({ y: 800 }, 2000, Phaser.Easing.Linear.None, true);
+
             tween.onComplete.add(this.startGame, this);
         };
+
         MainMenu.prototype.startGame = function () {
             this.game.state.start('Level1', true, false);
         };
@@ -117,17 +129,20 @@ var Castlevania;
     Castlevania.MainMenu = MainMenu;
 })(Castlevania || (Castlevania = {}));
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 var Castlevania;
 (function (Castlevania) {
     var Player = (function (_super) {
         __extends(Player, _super);
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'heroShip', 0);
+
             this.anchor.setTo(0.5, 1);
-            game.physics.arcade.enableBody(this);
-            game.add.existing(this);
+
+            this.game.physics.arcade.enableBody(this);
+            this.body.collideWorldBounds = true;
+            this.game.add.existing(this);
             this.inputEnabled = true;
             this.input.enableDrag();
             this.events.onDragStart.add(this.onDown, this);
@@ -148,20 +163,28 @@ var Castlevania;
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
                 this.body.velocity.y = 150;
             }
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+                this.fire();
+            }
         };
+
         Player.prototype.onDown = function (sprite, pointer) {
             this.body.moves = false;
         };
+
         Player.prototype.onUp = function (sprite, pointer) {
             this.body.moves = true;
+        };
+
+        Player.prototype.fire = function () {
         };
         return Player;
     })(Phaser.Sprite);
     Castlevania.Player = Player;
 })(Castlevania || (Castlevania = {}));
 /**
- * Created by Utilisateur on 12/12/2014.
- */
+* Created by Utilisateur on 12/12/2014.
+*/
 var Castlevania;
 (function (Castlevania) {
     var Preloader = (function (_super) {
@@ -174,16 +197,19 @@ var Castlevania;
             this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
             this.preloadBar.anchor.set(0.5, 0.5);
             this.load.setPreloadSprite(this.preloadBar);
+
             //  Load our actual games assets
             this.load.image('logo', 'assets/logo.png');
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('heroShip', 'assets/PNG/playerShip3_blue.png');
             this.load.image('blueBackground', 'assets/backgrounds/blue.png');
         };
+
         Preloader.prototype.create = function () {
             var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(this.startMainMenu, this);
         };
+
         Preloader.prototype.startMainMenu = function () {
             this.game.state.start('MainMenu', true, false);
         };
