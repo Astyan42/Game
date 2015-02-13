@@ -137,7 +137,6 @@ var Castlevania;
         __extends(Player, _super);
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'heroShip', 0);
-
             this.anchor.setTo(0.5, 1);
 
             this.game.physics.arcade.enableBody(this);
@@ -147,6 +146,7 @@ var Castlevania;
             this.input.enableDrag();
             this.events.onDragStart.add(this.onDown, this);
             this.events.onDragStop.add(this.onUp, this);
+            this.bullets = new Phaser.Group(this.game, this.world, "bullet", true, true);
         }
         Player.prototype.update = function () {
             this.body.velocity.x = 0;
@@ -177,6 +177,16 @@ var Castlevania;
         };
 
         Player.prototype.fire = function () {
+            var bullet = this.game.state.getCurrentState().add.sprite(this.x, this.y - this.height, "blueLaser");
+            bullet.anchor.set(0.5, 1);
+            bullet.checkWorldBounds = true;
+            bullet.events.onOutOfBounds.add(this.removeBullet, bullet);
+            this.bullets.add(bullet);
+            bullet.body.velocity.y = -2500;
+        };
+
+        Player.prototype.removeBullet = function (target) {
+            target.kill();
         };
         return Player;
     })(Phaser.Sprite);
@@ -203,6 +213,7 @@ var Castlevania;
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('heroShip', 'assets/PNG/playerShip3_blue.png');
             this.load.image('blueBackground', 'assets/backgrounds/blue.png');
+            this.load.image('blueLaser', 'assets/PNG/Lasers/laserBlue01.png');
         };
 
         Preloader.prototype.create = function () {

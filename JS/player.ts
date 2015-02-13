@@ -5,10 +5,13 @@ module Castlevania {
 
     export class Player extends Phaser.Sprite {
 
+        private fireRate:number;
+        private fireMode:number;
+        private maxBullet:number;
+        private bullets:Phaser.Group;
         constructor(game: Phaser.Game, x: number, y: number) {
 
             super(game, x, y, 'heroShip', 0);
-
             this.anchor.setTo(0.5, 1);
 
             this.game.physics.arcade.enableBody(this);
@@ -18,11 +21,11 @@ module Castlevania {
             this.input.enableDrag();
             this.events.onDragStart.add(this.onDown, this);
             this.events.onDragStop.add(this.onUp,this);
+            this.bullets = new Phaser.Group(this.game,this.world,"bullet",true,true);
         }
 
 
         update() {
-
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
@@ -51,7 +54,16 @@ module Castlevania {
         }
 
         private fire(){
+            var bullet = this.game.state.getCurrentState().add.sprite(this.x,this.y-this.height,"blueLaser");
+            bullet.anchor.set(0.5,1);
+            bullet.checkWorldBounds = true;
+            bullet.events.onOutOfBounds.add( this.removeBullet, bullet );
+            this.bullets.add(bullet);
+            bullet.body.velocity.y = -2500;
+        }
 
+        private removeBullet(target){
+            target.kill();
         }
     }
 

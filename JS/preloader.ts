@@ -19,6 +19,7 @@ module Castlevania {
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('heroShip', 'assets/PNG/playerShip3_blue.png');
             this.load.image('blueBackground', 'assets/backgrounds/blue.png');
+            this.load.image('blueLaser', 'assets/PNG/Lasers/laserBlue01.png');
 
         }
 
