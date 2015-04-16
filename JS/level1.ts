@@ -87,7 +87,9 @@ module Castlevania {
                 moveShipX = 150;
             }
             if(this.keySpaceIsDown){
-                var bullet = this.player.fire();
+                if(this.player) {
+                    var bullet = this.player.fire();
+                }
                 if(bullet){
                     this.bullets.add(bullet);
                     bullet.body.velocity.y = -2500;
@@ -95,11 +97,10 @@ module Castlevania {
             }
             if(this.keyDownIsDown || this.keyLeftIsDown || this.keyRightIsDown || this.keyUpIsDown){
                if(this.player){
-
-                   this.player.body.velocity.x = moveShipX;
-                   this.player.body.velocity.y = moveShipY;
+                    this.player.moveShip(moveShipX,moveShipY);
                }
             }
+            this.checkCollision();
         }
 
         enemyHasToAppear(){
@@ -109,6 +110,16 @@ module Castlevania {
             }
             return false;
         }
+
+        checkCollision(){
+            this.game.physics.arcade.collide(this.enemies,this.bullets,this.killEnemy,null,this);
+        }
+
+        killEnemy(ship,bullet){
+            ship.kill();
+            bullet.kill();
+        }
+
 
     }
 

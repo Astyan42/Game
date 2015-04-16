@@ -8,8 +8,9 @@ module Castlevania {
         private fireRate:number;
         private fireMode:number;
         private maxBullet:number;
+        private moveX:number;
+        private moveY:number;
         constructor(game: Phaser.Game, x: number, y: number) {
-
             super(game, x, y, 'heroShip', 0);
             this.anchor.setTo(0.5, 1);
             this.fireRate = 0;
@@ -26,9 +27,13 @@ module Castlevania {
 
         update() {
             this.fireRate--;
-
             this.body.velocity.x = 0;
             this.body.velocity.y = 0;
+            if(this.moveX != 0 || this.moveY !=0){
+                this.body.velocity.x = this.moveX;
+                this.body.velocity.y = this.moveY;
+                this.moveShip(0,0); // resets the move values;
+            }
         }
 
         private onDown(sprite,pointer) {
@@ -49,6 +54,11 @@ module Castlevania {
                 return bullet;
             }
             return null;
+        }
+
+        public moveShip(x,y){
+            this.moveX = x;
+            this.moveY = y;
         }
 
         private removeBullet(target){
