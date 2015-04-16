@@ -22,6 +22,7 @@ module Castlevania {
             (<MyGame>this.game).physics.startSystem(Phaser.Physics.ARCADE);
             var tweenFadeBackgroundIn = this.add.tween((<MyGame>this.game).background).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
             tweenFadeBackgroundIn.onComplete.add(this.showStage, this);
+
             this.enemies = new Phaser.Group(this.game,this.world,"enemies",true,true);
             this.bullets = new Phaser.Group(this.game,this.world,"bullet",true,true);
             this.game.input.keyboard.addCallbacks(this, this.pressKey, this.releaseKey);
@@ -70,7 +71,8 @@ module Castlevania {
 
         update(){
             if(this.enemyHasToAppear()){
-                this.enemies.add(new Enemy(this.game,this.world.centerX,0));
+                var enemy = new Enemy(this.game,this.world.randomX,0);
+                this.enemies.add(enemy);
             }
             var moveShipX = 0;
             var moveShipY = 0;
@@ -105,7 +107,7 @@ module Castlevania {
 
         enemyHasToAppear(){
             // 1 % chance to pop an enemy
-            if(Math.random() >= 0.99){
+            if(Math.random() >= 0.995){
                 return true;
             }
             return false;
@@ -116,8 +118,14 @@ module Castlevania {
         }
 
         killEnemy(ship,bullet){
-            ship.kill();
-            bullet.kill();
+            if(!ship.isDestroyed) {
+                ship.loadTexture('explosion');
+                ship.destroyed();
+                bullet.kill();
+            }
+            else{
+                bullet.body.velocity.y = -2500;
+            }
         }
 
 
